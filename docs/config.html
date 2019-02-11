@@ -153,7 +153,7 @@
         let val =  $(row).find("input[name="+emotion+"]").val();
         if(condition != "none"){
           data.emotion[emotion] = {};
-          data.emotion[emotion][condition] = val;
+          data.emotion[emotion][condition] = parseInt(val);
         }
       }
       promises.push(db.collection("condition").doc().set(data));
