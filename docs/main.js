@@ -1,39 +1,64 @@
-
 $(document).ready(function () {
   setupTitle();
   startVideo();
-
-  var $videoSrc;
-  $('.video-btn').click(function () {
-    $videoSrc = $(this).data("src");
-  });
+  var player;
 
 
 // when the modal is opened autoplay it
   $('#myModal').on('shown.bs.modal', function (e) {
 // set the video src to autoplay and not to show related video. Youtube related video is like a box of chocolates... you never know what you're gonna get
-    $("#video").attr('src', $videoSrc + "?rel=0&amp;showinfo=0&amp;modestbranding=1&amp;autoplay=1");
-  })
+    //  $("#video").attr('src', $videoSrc + "?rel=0&amp;showinfo=0&amp;modestbranding=1&amp;autoplay=1");
+    // 3. This function creates an <iframe> (and YouTube player)
+    //    after the API code downloads.
+    stopVideo();
+    player = new YT.Player('player', {
+      height: '360',
+      width: '640',
+      videoId: 'nuJHenDGUa8',
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
 
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.ENDED) {
+        $('#myModal').modal('hide');
+      }
+    }
+
+  });
+
+  function onPlayerReady(event) {
+    event.target.playVideo();
+  }
+
+  function stopVideo() {
+    if (player) {
+      player.stopVideo();
+      player.destroy();
+      player = undefined;
+    }
+  }
 
 // stop playing the youtube video when I close the modal
   $('#myModal').on('hide.bs.modal', function (e) {
-    // a poor man's stop video
-    $("#video").attr('src', $videoSrc);
+    stopVideo();
   })
 
 
 // document ready
 });
 
-function setupTitle(){
+function setupTitle() {
   var title = document.getElementById("title");
   title.innerText = faceEmotionConfig.title;
   var headTitle = document.getElementById("head-title");
   headTitle.innerText = faceEmotionConfig.title;
 
 }
-function startVideo(){
+
+function startVideo() {
 
 // もろもろの準備
   var video = document.getElementById("camera");           // video 要素を取得
@@ -76,11 +101,11 @@ function startVideo(){
 
 }
 
-function emotionCallback(emo){
+function emotionCallback(emo) {
   var emoObj = {};
   var str = "";
   for (var i = 0; i < emo.length; i++) {
-    emoObj[ emo[i].emotion ] =  emo[i].value;
+    emoObj[emo[i].emotion] = emo[i].value;
   }
 
   showEmotionData(emoObj);
@@ -88,16 +113,15 @@ function emotionCallback(emo){
 }
 
 
-
 function showEmotionData(emo) {
   var str = "";                                          // データの文字列を入れる変数
-  for( var e in emo){
+  for (var e in emo) {
     str += e + ": " + emo[e].toFixed(1) + "<br/>";
   }
   var dat = document.getElementById("dat");             // データ表示用div要素の取得
   dat.innerHTML = str;                                  // データ文字列の表示
 }
 
-function checkEmotion(){
+function checkEmotion() {
 
 }
