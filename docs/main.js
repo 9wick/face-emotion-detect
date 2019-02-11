@@ -2,6 +2,7 @@ $(document).ready(function () {
   setupTitle();
   startVideo();
   var player;
+  var targetVideoId = 'nuJHenDGUa8';
 
 
 // when the modal is opened autoplay it
@@ -14,7 +15,7 @@ $(document).ready(function () {
     player = new YT.Player('player', {
       height: '360',
       width: '640',
-      videoId: 'nuJHenDGUa8',
+      videoId: targetVideoId,
       events: {
         'onReady': onPlayerReady,
         'onStateChange': onPlayerStateChange
@@ -87,6 +88,7 @@ function startVideo() {
 // 描画ループ
   function drawLoop() {
     requestAnimationFrame(drawLoop);                      // drawLoop 関数を繰り返し実行
+    return;
     var positions = tracker.getCurrentPosition();         // 顔部品の現在位置の取得
     var parameters = tracker.getCurrentParameters();      // ★現在の顔のパラメータを取得
     var emotion = classifier.meanPredict(parameters);     // ★そのパラメータから感情を推定して emotion に結果を入れる
