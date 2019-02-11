@@ -77,13 +77,13 @@ function startVideo() {
   });
 
 // clmtrackr の開始
-  var tracker = new clm.tracker();  // tracker オブジェクトを作成
-  tracker.init(pModel);             // tracker を所定のフェイスモデル（※1）で初期化
-  tracker.start(video);             // video 要素内でフェイストラッキング開始
-
-// 感情分類の開始
-  var classifier = new emotionClassifier();               // ★emotionClassifier オブジェクトを作成
-  classifier.init(emotionModel);                          // ★classifier を所定の感情モデル（※2）で初期化
+//   var tracker = new clm.tracker();  // tracker オブジェクトを作成
+//   tracker.init(pModel);             // tracker を所定のフェイスモデル（※1）で初期化
+//   tracker.start(video);             // video 要素内でフェイストラッキング開始
+//
+// // 感情分類の開始
+//   var classifier = new emotionClassifier();               // ★emotionClassifier オブジェクトを作成
+//   classifier.init(emotionModel);                          // ★classifier を所定の感情モデル（※2）で初期化
 
 // 描画ループ
   function drawLoop() {
