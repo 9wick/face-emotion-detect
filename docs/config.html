@@ -99,6 +99,7 @@
         customTemplateString = customTemplateString.split("{{data.emotion."+emotion+".value}}").join(value);
       }
 
+      customTemplateString = customTemplateString.replace(/{{.*}}/g, '');
       div.innerHTML = customTemplateString;
       $("#conditionTable tbody").append(div.rows[0]);
     });
@@ -170,8 +171,8 @@
 
 <script type="text/x-template" id="table-row-template" style="display:hidden">
   <tr>
-    <td>https://www.youtube.com/watch?v=<input type="text" name="video" value="{{data.video}}"/>
-    <br/>
+    <td>
+      https://www.youtube.com/watch?v=<input type="text" name="video" value="{{data.video}}"/><br/>
       <img src="http://img.youtube.com/vi/{{data.video}}/0.jpg" style="max-width:400px;max-height:200px;padding:10px"/>
     </td>
     <td>
