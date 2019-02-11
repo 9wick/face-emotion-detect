@@ -170,39 +170,41 @@
 
 <script type="text/x-template" id="table-row-template" style="display:hidden">
   <tr>
-    <td>https://www.youtube.com/watch?v=<input type="text" name="video" value="{{data.video}}"/></td>
+    <td>https://www.youtube.com/watch?v=<input type="text" name="video" value="{{data.video}}"/>
+    <br/>
+      <img src="http://img.youtube.com/vi/{{data.video}}/0.jpg" style="max-width:400px;max-height:200px;padding:10px"/>
+    </td>
     <td>
-
-      angry（怒り） <select name="angry">
+      <div style="width:150px;display:inline-block" >angry（怒り）</div> <select name="angry">
       <option value="none" {{data.emotion.angry.none}}>気にしない</option>
       <option value="&gt;" {{data.emotion.angry.>}}>&gt;</option>
       <option value="&lt;" {{data.emotion.angry.<}} >&lt;</option>
-    </select><input type="text" name="angry" value="{{data.emotion.angry.value}}"/> <br/>
-      disgusted（嫌悪） <select name="disgusted">
+    </select>&nbsp;&nbsp;<input type="text" name="angry" value="{{data.emotion.angry.value}}"/> <br/>
+      <div style="width:150px;display:inline-block" >disgusted（嫌悪） </div><select name="disgusted">
       <option value="none" {{data.emotion.disgusted.none}}>気にしない</option>
       <option value="&gt;" {{data.emotion.disgusted.>}}>&gt;</option>
       <option value="&lt;" {{data.emotion.disgusted.<}} >&lt;</option>
-    </select><input type="text" name="disgusted" value="{{data.emotion.disgusted.value}}"/> <br/>
-      fear（恐怖） <select name="fear">
+    </select>&nbsp;&nbsp;<input type="text" name="disgusted" value="{{data.emotion.disgusted.value}}"/> <br/>
+        <div style="width:150px;display:inline-block" >fear（恐怖） </div><select name="fear">
       <option value="none" {{data.emotion.fear.none}}>気にしない</option>
       <option value="&gt;" {{data.emotion.fear.>}}>&gt;</option>
       <option value="&lt;" {{data.emotion.fear.<}} >&lt;</option>
-    </select><input type="text" name="fear" value="{{data.emotion.fear.value}}"/> <br/>
-      sad（悲しみ） <select name="sad">
+    </select>&nbsp;&nbsp;<input type="text" name="fear" value="{{data.emotion.fear.value}}"/> <br/>
+          <div style="width:150px;display:inline-block" >sad（悲しみ） </div><select name="sad">
       <option value="none" {{data.emotion.sad.none}}>気にしない</option>
       <option value="&gt;" {{data.emotion.sad.>}}>&gt;</option>
       <option value="&lt;" {{data.emotion.sad.<}} >&lt;</option>
-    </select><input type="text" name="sad" value="{{data.emotion.sad.value}}"/> <br/>
-      surprised（驚き） <select name="surprised">
+    </select>&nbsp;&nbsp;<input type="text" name="sad" value="{{data.emotion.sad.value}}"/> <br/>
+            <div style="width:150px;display:inline-block" >surprised（驚き）</div> <select name="surprised">
       <option value="none" {{data.emotion.surprised.none}}>気にしない</option>
       <option value="&gt;" {{data.emotion.surprised.>}}>&gt;</option>
       <option value="&lt;" {{data.emotion.surprised.<}} >&lt;</option>
-    </select><input type="text" name="surprised" value="{{data.emotion.surprised.value}}"/> <br/>
-      happy（喜び） <select name="happy">
+    </select>&nbsp;&nbsp;<input type="text" name="surprised" value="{{data.emotion.surprised.value}}"/> <br/>
+              <div style="width:150px;display:inline-block" >happy（喜び） </div><select name="happy">
       <option value="none" {{data.emotion.happy.none}}>気にしない</option>
       <option value="&gt;" {{data.emotion.happy.>}}>&gt;</option>
       <option value="&lt;" {{data.emotion.happy.<}} >&lt;</option>
-    </select><input type="text" name="happy" value="{{data.emotion.happy.value}}"/> <br/>
+    </select>&nbsp;&nbsp;<input type="text" name="happy" value="{{data.emotion.happy.value}}"/> <br/>
     </td>
     <td>
       <button type="button" class="btn btn-danger" onclick="removeRow(this)">削除</button>
