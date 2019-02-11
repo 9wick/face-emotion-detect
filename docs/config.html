@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+          integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+          crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+          integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+          crossorigin="anonymous"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase-firestore.js"></script>
+  <title id="head-title">config</title>
+
+</head>
+
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-11 ">
+  <h1>設定画面</h1>
+    </div>
+
+    <div class="col-1">
+      <button type="button" class="btn btn-primary"  onclick="save()">保存</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-8">
+      タイトル　：　<input type="text" id="title-input"/><br/><br/>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <table class="table" id="conditionTable">
+        <thead>
+        <tr>
+          <th scope="col">video</th>
+          <th scope="col">emotion</th>
+          <th scope="col">operation</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-secondary" onclick="addNewRow()">追加</button>
+    </div>
+  </div>
+</div>
+<script>
+
+  var config = {
+    apiKey: "AIzaSyAYBSrPymSdfp_kChgqb1Ax8rwcbhaq5ho",
+    authDomain: "emotion-detect-bf09d.firebaseapp.com",
+    databaseURL: "https://emotion-detect-bf09d.firebaseio.com",
+    projectId: "emotion-detect-bf09d",
+    storageBucket: "emotion-detect-bf09d.appspot.com",
+    messagingSenderId: "419522166698"
+  };
+  firebase.initializeApp(config);
+  var db = firebase.firestore();
+
+  db.collection("config").doc("site").get().then((doc) => {
+    if (doc.exists) {
+      $("#title-input").val(doc.data().title)
+    };
+  });
+
+
+  db.collection("condition").get().then((querySnapshot) => {
+    var templateString = $("#table-row-template").html();
+    querySnapshot.forEach((doc) => {
+      var data = doc.data();
+      var div = document.createElement("table");
+      let customTemplateString = templateString;
+      customTemplateString = customTemplateString.split("{{id}}").join(doc.id);
+      customTemplateString = customTemplateString.split("{{data.video}}").join(data.video);
+      let emotions = ["angry", "disgusted", "fear", "sad", "surprised", "happy"];
+      for (let emotion of emotions) {
+        let one = data.emotion[emotion];
+        let value = 0;
+        let condition = "none";
+        if (one) {
+          for (let c in one) {
+            value = one[c];
+            condition = c;
+            customTemplateString = customTemplateString.split("{{data.emotion."+emotion+"."+condition+"}}").join("selected");
+            break;
+          }
+        }
+        customTemplateString = customTemplateString.split("{{data.emotion."+emotion+".value}}").join(value);
+      }
+
+      div.innerHTML = customTemplateString;
+      $("#conditionTable tbody").append(div.rows[0]);
+    });
+  })
+
+  function addNewRow(){
+    var templateString = $("#table-row-template").html();
+    let customTemplateString = templateString;
+    customTemplateString = customTemplateString.replace(/{{.*}}/g, '');
+    var div = document.createElement("table");
+    div.innerHTML = customTemplateString;
+    $("#conditionTable tbody").append(div.rows[0]);
+
+  }
+  function removeRow(e){
+    e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
+  }
+
+  async function save(){
+
+    let promises = [];
+
+    promises.push(db.collection("config").doc("site").set({
+      title:$("#title-input").val()
+    }));
+
+    let deletePromises = [];
+
+    await new Promise(resolve => {
+      db.collection("condition").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc);
+          deletePromises.push( db.collection("condition").doc(doc.id).delete());
+        });
+        resolve();
+      })
+
+    })
+    await Promise.all(deletePromises);
+
+
+    let rows = $("#conditionTable tbody tr");
+    for(let row of rows){
+      let data = {};
+      data.video = $(row).find("input[name=video]").val();
+
+      data.emotion = {};
+      let emotions = ["angry", "disgusted", "fear", "sad", "surprised", "happy"];
+      for(let emotion of emotions){
+        let condition =  $(row).find("select[name="+emotion+"]").val();
+        let val =  $(row).find("input[name="+emotion+"]").val();
+        if(condition != "none"){
+          data.emotion[emotion] = {};
+          data.emotion[emotion][condition] = val;
+        }
+      }
+      promises.push(db.collection("condition").doc().set(data));
+    }
+
+    Promise.all(promises).then(()=>{
+      alert("保存しました")
+    }).catch(()=>{
+      alert("保存に失敗しました")
+    });
+
+  }
+
+</script>
+
+<script type="text/x-template" id="table-row-template" style="display:hidden">
+  <tr>
+    <td>https://www.youtube.com/watch?v=<input type="text" name="video" value="{{data.video}}"/></td>
+    <td>
+
+      angry（怒り） <select name="angry">
+      <option value="none" {{data.emotion.angry.none}}>気にしない</option>
+      <option value="&gt;" {{data.emotion.angry.>}}>&gt;</option>
+      <option value="&lt;" {{data.emotion.angry.<}} >&lt;</option>
+    </select><input type="text" name="angry" value="{{data.emotion.angry.value}}"/> <br/>
+      disgusted（嫌悪） <select name="disgusted">
+      <option value="none" {{data.emotion.disgusted.none}}>気にしない</option>
+      <option value="&gt;" {{data.emotion.disgusted.>}}>&gt;</option>
+      <option value="&lt;" {{data.emotion.disgusted.<}} >&lt;</option>
+    </select><input type="text" name="disgusted" value="{{data.emotion.disgusted.value}}"/> <br/>
+      fear（恐怖） <select name="fear">
+      <option value="none" {{data.emotion.fear.none}}>気にしない</option>
+      <option value="&gt;" {{data.emotion.fear.>}}>&gt;</option>
+      <option value="&lt;" {{data.emotion.fear.<}} >&lt;</option>
+    </select><input type="text" name="fear" value="{{data.emotion.fear.value}}"/> <br/>
+      sad（悲しみ） <select name="sad">
+      <option value="none" {{data.emotion.sad.none}}>気にしない</option>
+      <option value="&gt;" {{data.emotion.sad.>}}>&gt;</option>
+      <option value="&lt;" {{data.emotion.sad.<}} >&lt;</option>
+    </select><input type="text" name="sad" value="{{data.emotion.sad.value}}"/> <br/>
+      surprised（驚き） <select name="surprised">
+      <option value="none" {{data.emotion.surprised.none}}>気にしない</option>
+      <option value="&gt;" {{data.emotion.surprised.>}}>&gt;</option>
+      <option value="&lt;" {{data.emotion.surprised.<}} >&lt;</option>
+    </select><input type="text" name="surprised" value="{{data.emotion.surprised.value}}"/> <br/>
+      happy（喜び） <select name="happy">
+      <option value="none" {{data.emotion.happy.none}}>気にしない</option>
+      <option value="&gt;" {{data.emotion.happy.>}}>&gt;</option>
+      <option value="&lt;" {{data.emotion.happy.<}} >&lt;</option>
+    </select><input type="text" name="happy" value="{{data.emotion.happy.value}}"/> <br/>
+    </td>
+    <td>
+      <button type="button" class="btn btn-danger" onclick="removeRow(this)">削除</button>
+    </td>
+  </tr>
+</script>
+
+
+</body>
+</html>

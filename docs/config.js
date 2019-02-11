@@ -1,14 +1,14 @@
-var faceEmotionConfig =  {
-  title : "タイトル",
-  detect : {
-    "youtubeUrl" : {
-      "angry" : {">=":0.6},
-      "disgused" : {">=":0.6},
-      "fear" : {">=":0.6},
-      "sad" : {">=":0.6},
-      "suprised" : {">=":0.6},
-      "happy" : {">=":0.6},
-    },
+var faceEmotionCondition = [
+  {
+    "video": "nuJHenDGUa8",
+    "emotion": {
+      "happy": {">": 0.6},
+    }
+  },
+  {
+    "video": "QJgHMc8GGSc",
+    "emotion": {
+      "sad": {">": 0.4},
+    }
   }
-
-}
+]
